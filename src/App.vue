@@ -1,34 +1,50 @@
 <template>
-  <van-button type="primary" @click="push">用户</van-button>
-  <van-button type="primary" @click="push1">经营</van-button>
-  <van-button type="primary" @click="push2">活动</van-button>
-  <div class="test">1111</div>
-  <div class="test1">1111</div>
-  <RouterView />
+  <base-nav-bar :title="title" @click-left="onClickLeft" />
+  <common-top :topList="topList" />
+  <div class="container">
+    <router-view />
+  </div>
+  <base-tab-bar v-model:active="active" @tab-change="tabChange" />
 </template>
 
 <script setup>
-import { RouterView, useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
+import { RouterView, useRouter, useRoute } from 'vue-router'
+import CommonTop from './components/CommonTop.vue'
 const router = useRouter()
-function push() {
-  router.push(`/`)
+const nameList = [`用户概览与特征`, `经营分析`, `活动分析`]
+const routerList = [`/`, `/businessAnalysis`, `/activityAnalysis`]
+const active = ref(0)
+const title = ref(`用户概览与特征`)
+const route = useRoute()
+const topList = ref(
+  new Array(5).fill({
+    title: `会员人数`,
+    num: `13,000`,
+    hb: `112.61%`,
+    tb: `112.61%`
+  })
+)
+console.log(topList)
+function tabChange(index) {
+  router.push(routerList[index])
+  title.value = nameList[index]
 }
-function push1() {
-  router.push(`/businessAnalysis`)
+function onClickLeft() {
+  router.go(-1)
 }
-function push2() {
-  router.push(`/activityAnalysis`)
-}
+watch(
+  () => route.path,
+  (val) => {
+    const index = routerList.findIndex((item) => item.includes(val))
+    active.value = index
+    title.value = nameList[index]
+  }
+)
 </script>
 
-<style scoped lang="scss">
-.test {
-  width: 200px;
-  height: 50px;
-}
-.test1 {
-  width: fit-content;
-  display: flex;
-  transform: translate(-50%);
+<style lang="scss">
+.container {
+  padding: 0 24px 90px;
 }
 </style>

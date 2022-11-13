@@ -29,6 +29,15 @@ module.exports = {
         }
       }
     ],
-    'vue/multi-word-component-names': 0
+    'vue/multi-word-component-names': 0,
+    'vue/comment-directive': 0,
+    'vue/component-name-in-template-casing': [
+      `error`,
+      `kebab-case`,
+      {
+        registeredComponentsOnly: false,
+        ignores: []
+      }
+    ]
   }
 }
