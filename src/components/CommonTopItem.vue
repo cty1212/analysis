@@ -11,6 +11,7 @@
           </div>
           <div class="percent">
             <span class="txt">{{ item.hb }}</span>
+            <base-svg name="down" class="down" />
           </div>
         </div>
         <div class="box-item">
@@ -20,6 +21,7 @@
           </div>
           <div class="percent">
             <span class="txt">{{ item.tb }}</span>
+            <base-svg name="up" class="up" />
           </div>
         </div>
       </div>
@@ -53,11 +55,17 @@ const { item } = toRefs(props)
     }
   }
 }
+.down,
+.up {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 6px;
+}
 .item {
   display: flex;
   flex-direction: column;
   border-right: 1px solid rgba(216, 215, 217, 1);
-  padding-right: 45px;
+  padding-right: 36px;
   .title {
     font-size: 24px;
     color: #333333;
@@ -79,7 +87,7 @@ const { item } = toRefs(props)
     display: flex;
     .box-item {
       &:first-child {
-        margin-right: 60px;
+        margin-right: 63px;
       }
       .txt {
         display: flex;
@@ -104,13 +112,16 @@ const { item } = toRefs(props)
         display: flex;
         align-items: center;
         margin-left: 16px;
+        height: 40px;
         .txt {
           font-family: Oswald-Regular;
           font-size: 24px;
           color: #333333;
           letter-spacing: 0;
           line-height: 40px;
+          height: 40px;
           font-weight: 400;
+          margin-right: 6px;
         }
       }
     }

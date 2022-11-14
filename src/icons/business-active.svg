@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>pie-chart-fill</title>
+    <defs>
+        <linearGradient x1="20.7199823%" y1="12.2177927%" x2="84.1976921%" y2="85.5583019%" id="linearGradient-1">
+            <stop stop-color="#FECA8C" offset="0%"></stop>
+            <stop stop-color="#FF8800" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="11.1版本" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="经营分析" transform="translate(-351.000000, -2062.000000)">
+            <g id="编组-2" transform="translate(0.000000, 2044.000000)">
+                <g id="pie-chart-fill" transform="translate(351.000000, 18.000000)">
+                    <polygon id="路径" points="0 0 48 0 48 48 0 48"></polygon>
+                    <path d="M22,4.1 L22,26 L43.9,26 C42.898,36.106 34.37,44 24,44 C12.954,44 4,35.046 4,24 C4,13.63 11.894,5.102 22,4.1 Z M26,4.1 C35.4629712,5.0532977 42.9467023,12.5370288 43.9,22 L26,22 L26,4.1 Z" id="形状" fill="url(#linearGradient-1)" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

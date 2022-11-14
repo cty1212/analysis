@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>pie-chart-line</title>
+    <g id="11.1版本" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="活动分析" transform="translate(-351.000000, -1359.000000)">
+            <g id="编组-2" transform="translate(0.000000, 1341.000000)">
+                <g id="pie-chart-line" transform="translate(351.000000, 18.000000)">
+                    <polygon id="路径" points="0 0 48 0 48 48 0 48"></polygon>
+                    <path d="M24,44 C12.954,44 4,35.046 4,24 C4,15.044 9.886,7.464 18,4.916 L18,9.164 C10.9093199,12.0432298 6.84882621,19.5390231 8.310508,27.051093 C9.77218979,34.563163 16.3470529,39.9895522 24,40 C30.5205895,39.9998201 36.3892512,36.0441301 38.836,30 L43.084,30 C40.536,38.114 32.956,44 24,44 Z M43.9,26 L22,26 L22,4.1 C22.658,4.034 23.326,4 24,4 C35.046,4 44,12.954 44,24 C44,24.674 43.966,25.342 43.9,26 Z M26,8.124 L26,22 L39.876,22 C38.9602852,14.7495381 33.2504619,9.03971481 26,8.124 Z" id="形状" fill="#333333" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

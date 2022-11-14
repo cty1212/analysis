@@ -1,7 +1,12 @@
 <template>
   <base-card class="mb24">
-    <van-tabs v-model:active="VipChannelKey" @click-tab="onClickTab">
-      <van-tab :title="item" v-for="item in vipChannel" :key="item" />
+    <van-tabs v-model:active="vipChannelKey" @click-tab="onClickTab">
+      <van-tab
+        :title="item"
+        v-for="item in vipChannel"
+        :name="item"
+        :key="item"
+      />
     </van-tabs>
     <base-echart
       v-if="vipChannelKey === '会员等级'"

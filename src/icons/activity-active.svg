@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>apps-fill</title>
+    <defs>
+        <linearGradient x1="9.91867467%" y1="1.86492518%" x2="94.4292169%" y2="104.210743%" id="linearGradient-1">
+            <stop stop-color="#FECA8C" offset="0%"></stop>
+            <stop stop-color="#FF8000" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="11.1版本" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="活动分析" transform="translate(-575.000000, -1359.000000)">
+            <g id="编组-2" transform="translate(0.000000, 1341.000000)">
+                <g id="apps-fill" transform="translate(575.000000, 18.000000)">
+                    <polygon id="路径" points="0 0 48 0 48 48 0 48"></polygon>
+                    <path d="M13.5,5 C18.1944204,5 22,8.80557963 22,13.5 L22,22 L13.5,22 C8.80557963,22 5,18.1944204 5,13.5 C5,8.80557963 8.80557963,5 13.5,5 L13.5,5 Z M13.5,26 L22,26 L22,34.5 C22,39.1944204 18.1944204,43 13.5,43 C8.80557963,43 5,39.1944204 5,34.5 C5,29.8055796 8.80557963,26 13.5,26 Z M34.5,5 C39.1944204,5 43,8.80557963 43,13.5 C43,18.1944204 39.1944204,22 34.5,22 L26,22 L26,13.5 C26,8.80557963 29.8055796,5 34.5,5 Z M26,26 L34.5,26 C39.1944204,26 43,29.8055796 43,34.5 C43,39.1944204 39.1944204,43 34.5,43 C29.8055796,43 26,39.1944204 26,34.5 L26,26 Z" id="形状" fill="url(#linearGradient-1)" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

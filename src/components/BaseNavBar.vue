@@ -23,9 +23,14 @@ function onClickLeft(val) {
 </script>
 
 <style lang="scss">
+.van-safe-area-top {
+  background: orange;
+  background-image: url('@/assets/imgs/header-bg.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
 .van-nav-bar__content {
   height: 88px;
-  background: orange;
 }
 .van-nav-bar__title {
   font-size: 36px;

@@ -12,7 +12,14 @@
       :icon="item.icon"
       v-for="item in props.tabBarList"
       :key="item.icon"
-      >{{ item.name }}
+    >
+      <template #icon="props" v-if="item.slotIcon">
+        <base-svg
+          class="barIcon"
+          :name="props.active ? item.icon + '-active' : item.icon"
+        />
+      </template>
+      {{ item.name }}
     </van-tabbar-item>
   </van-tabbar>
 </template>
@@ -28,9 +35,9 @@ const props = defineProps({
   tabBarList: {
     type: Array,
     default: () => [
-      { icon: `friends-o`, name: `用户` },
-      { icon: `point-gift-o`, name: `经营` },
-      { icon: `apps-o`, name: `活动` }
+      { icon: `user`, name: `用户`, slotIcon: true },
+      { icon: `business`, name: `经营`, slotIcon: true },
+      { icon: `activity`, name: `活动`, slotIcon: true }
     ]
   }
 })
@@ -50,5 +57,9 @@ function tabChange(val) {
 <style lang="scss">
 .van-tabbar {
   height: 108px;
+}
+.barIcon {
+  width: 40px;
+  height: 40px;
 }
 </style>
