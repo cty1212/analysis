@@ -53,17 +53,51 @@
   <base-card title="注册用户生命周期" class="mb24">
     <base-echart :options="initRadarOption()" class="h727" />
   </base-card>
-  <base-card title="业态复购率" class="mb18">
+  <base-card title="业态复购率" class="mb18 pr">
+    <div class="zoom" @click="zoom">
+      <base-svg name="zoom-in" class="zoom-in" />
+    </div>
     <base-echart :options="initBarLineMergeOption()" class="h400" />
   </base-card>
+  <van-popup v-model:show="showLandscape">
+    <div class="bg-all-white">
+      <base-echart
+        ref="childChart"
+        landscape
+        :options="
+          initBarLineMergeOption({
+            right: '8%',
+            left: '4%',
+            top: '15%',
+            bottom: '14%'
+          })
+        "
+        class="landscape"
+      />
+      <div class="zoom zoom-out" @click="zoomOut">
+        <base-svg name="zoom-out" class="zoom-in" />
+      </div>
+    </div>
+  </van-popup>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 const sexPlateAge = [`性别`, `板块`, `年龄`]
 const activeKey = ref(`性别`)
 const vipChannel = [`会员等级`, `注册渠道`]
 const vipChannelKey = ref(`会员等级`)
+const showLandscape = ref(false)
+const childChart = ref(null)
+function zoom() {
+  showLandscape.value = true
+  nextTick(() => {
+    childChart.value.resizeHandler()
+  })
+}
+function zoomOut() {
+  showLandscape.value = false
+}
 function onClickTab(val) {
   console.log(val)
   vipChannelKey.value = val.title
@@ -203,7 +237,15 @@ function initBarOption(color = `#F39424`) {
     ]
   }
 }
-function initBarLineMergeOption(color = `#F39424`) {
+function initBarLineMergeOption(data = {}) {
+  const {
+    color = `#F39424`,
+    left = `3%`,
+    right = `5%`,
+    top = `12%`,
+    bottom = `18%`
+  } = data
+  console.log(color)
   return {
     tooltip: {
       trigger: `axis`,
@@ -215,10 +257,10 @@ function initBarLineMergeOption(color = `#F39424`) {
       }
     },
     grid: {
-      left: `3%`,
-      right: `5%`,
-      bottom: `18%`,
-      top: `12%`,
+      left,
+      right,
+      bottom,
+      top,
       containLabel: true
     },
     legend: {
@@ -390,7 +432,44 @@ function initRadarOption() {
     }
   }
 }
-
+.pr {
+  position: relative;
+}
+.zoom {
+  background: #ffffff;
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: absolute;
+  right: 32px;
+  top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 8;
+  &.zoom-out {
+    bottom: 44px;
+    right: 30px;
+    z-index: 8;
+    top: initial;
+  }
+  .zoom-in {
+    width: 38.89px;
+    height: 35px;
+  }
+}
+.bg-all-white {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+}
+.landscape {
+  width: 100vw;
+  height: 100vh;
+}
 .h400 {
   height: 552px;
   font-size: 15px;

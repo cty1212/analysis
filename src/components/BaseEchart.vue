@@ -9,7 +9,8 @@ import {
   watch,
   onMounted,
   onBeforeUnmount,
-  onActivated
+  onActivated,
+  nextTick
 } from 'vue'
 
 const props = defineProps({
@@ -24,6 +25,10 @@ const props = defineProps({
   height: {
     type: [String, number],
     default: ``
+  },
+  landscape: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -47,6 +52,19 @@ const styles = computed(() => {
   }
 })
 
+const landscapeStyles = computed(() => {
+  let width, height
+  if (props.landscape) {
+    width = document.documentElement.clientHeight + `px`
+    height = document.documentElement.clientWidth + `px`
+    return {
+      width,
+      height
+    }
+  }
+  return styles
+})
+
 const initChart = () => {
   if (unref(elRef) && props.options) {
     echartRef = echarts.init(unref(elRef))
@@ -67,6 +85,7 @@ watch(
 )
 
 const resizeHandler = debounce(() => {
+  console.log(1111111)
   if (echartRef) {
     echartRef.resize()
   }
@@ -78,9 +97,18 @@ const contentResizeHandler = async (e) => {
   }
 }
 
+let classLandscape = ref(``)
+
 onMounted(() => {
   initChart()
-
+  nextTick(() => {
+    if (props.landscape) {
+      classLandscape.value = `classLandscape`
+      console.log(elRef.value.style)
+      resizeHandler()
+      // elRef.value.style.width = document.documentElement.clientHeight
+    }
+  })
   window.addEventListener(`resize`, resizeHandler)
 
   contentEl.value = document.getElementsByClassName(`layout-content`)[0]
@@ -99,8 +127,24 @@ onActivated(() => {
     echartRef.resize()
   }
 })
+defineExpose({
+  resizeHandler
+})
 </script>
 
 <template>
-  <div ref="elRef" :class="[$attrs.class]" :style="styles" />
+  <div
+    ref="elRef"
+    :class="[$attrs.class, classLandscape]"
+    :style="landscapeStyles"
+  />
 </template>
+
+<style scoped lang="scss">
+.classLandscape {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+</style>
