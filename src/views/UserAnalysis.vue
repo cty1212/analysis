@@ -481,9 +481,6 @@ function initRadarOption() {
 .h727 {
   height: 727px;
 }
-.mb24 {
-  margin-bottom: 24px;
-}
 .mb18 {
   margin-bottom: 18px;
 }
