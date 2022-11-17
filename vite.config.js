@@ -38,7 +38,16 @@ export default defineConfig(({ mode }) => {
       }
     },
     server: {
-      host: `0.0.0.0`
+      host: `0.0.0.0`,
+      open: false, //启动项目后打开浏览器
+      // port: 1111, //端口
+      proxy: {
+        '/api': {
+          target: `http://localhost:3000/`, //API服务地址
+          changeOrigin: true //开启跨域
+          // rewrite: (path) => path.replace(/^\//, ``)
+        }
+      }
     },
     css: {
       postcss: {

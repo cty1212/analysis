@@ -107,3 +107,17 @@
 //     ]
 //   }
 // }
+
+// {
+//   name: `总计`,
+//   type: `bar`,
+//   tooltip: {
+//     valueFormatter: function (value) {
+//       return value + `%`
+//     }
+//   },
+//   data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 5.6, 8.2, 32.6],
+//   itemStyle: {
+//     color
+//   }
+// },

@@ -8,23 +8,17 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { RouterView, useRouter, useRoute } from 'vue-router'
 import CommonTop from './components/CommonTop.vue'
+import { getTopList } from './api/userAnalysis'
 const router = useRouter()
 const nameList = [`用户概览与特征`, `经营分析`, `活动分析`]
 const routerList = [`/`, `/businessAnalysis`, `/activityAnalysis`]
 const active = ref(0)
 const title = ref(`用户概览与特征`)
 const route = useRoute()
-const topList = ref(
-  new Array(5).fill({
-    title: `会员人数`,
-    num: `13,000`,
-    hb: `112.61%`,
-    tb: `112.61%`
-  })
-)
+const topList = ref([])
 console.log(topList)
 function tabChange(index) {
   router.push(routerList[index])
@@ -41,6 +35,10 @@ watch(
     title.value = nameList[index]
   }
 )
+onMounted(async () => {
+  const data = await getTopList()
+  topList.value = data
+})
 </script>
 
 <style lang="scss">

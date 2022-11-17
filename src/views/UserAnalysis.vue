@@ -10,12 +10,12 @@
     </van-tabs>
     <base-echart
       v-if="vipChannelKey === '会员等级'"
-      :options="initPieOption('会员等级', '32.5%')"
+      :options="vipLevel"
       class="h400"
     />
     <base-echart
       v-if="vipChannelKey === '注册渠道'"
-      :options="initPieOption('注册渠道', '32.5%')"
+      :options="registered"
       class="h400"
     />
   </base-card>
@@ -31,47 +31,28 @@
         {{ item }}
       </div>
     </div>
-    <base-echart
-      v-if="activeKey === '性别'"
-      :options="initPieOption('性别')"
-      class="h400"
-    />
-    <base-echart
-      v-if="activeKey === '板块'"
-      :options="initPieOption('板块')"
-      class="h400"
-    />
-    <base-echart
-      v-if="activeKey === '年龄'"
-      :options="initBarOption()"
-      class="h884"
-    />
+    <base-echart v-if="activeKey === '性别'" :options="sex" class="h400" />
+    <base-echart v-if="activeKey === '板块'" :options="plate" class="h400" />
+    <base-echart v-if="activeKey === '年龄'" :options="age" class="h884" />
   </base-card>
   <base-card title="注册来源分布" class="mb24">
-    <base-echart :options="initBarOption()" class="h884" />
+    <base-echart :options="registeredSource" class="h884" />
   </base-card>
   <base-card title="注册用户生命周期" class="mb24">
-    <base-echart :options="initRadarOption()" class="h727" />
+    <base-echart :options="userLife" class="h727" />
   </base-card>
   <base-card title="业态复购率" class="mb18 pr">
     <div class="zoom" @click="zoom">
       <base-svg name="zoom-in" class="zoom-in" />
     </div>
-    <base-echart :options="initBarLineMergeOption()" class="h400" />
+    <base-echart :options="bugAgain" class="h400" />
   </base-card>
   <van-popup v-model:show="showLandscape">
     <div class="bg-all-white">
       <base-echart
         ref="childChart"
         landscape
-        :options="
-          initBarLineMergeOption({
-            right: '8%',
-            left: '4%',
-            top: '15%',
-            bottom: '14%'
-          })
-        "
+        :options="bugAgain"
         class="landscape"
       />
       <div class="zoom zoom-out" @click="zoomOut">
@@ -82,13 +63,91 @@
 </template>
 
 <script setup>
-import { nextTick, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
+import {
+  getVipLevel,
+  getRegistered,
+  getRegisteredUsers,
+  getRegisteredSource,
+  getUserLife,
+  getBuyAgain
+} from '../api/userAnalysis'
+import { parseTime } from '../utils/index'
 const sexPlateAge = [`性别`, `板块`, `年龄`]
 const activeKey = ref(`性别`)
 const vipChannel = [`会员等级`, `注册渠道`]
 const vipChannelKey = ref(`会员等级`)
 const showLandscape = ref(false)
 const childChart = ref(null)
+const vipLevel = ref({})
+const registered = ref({})
+const age = ref({})
+const sex = ref({})
+const plate = ref({})
+const registeredSource = ref({})
+const userLife = ref({})
+const bugAgain = ref({})
+onMounted(async () => {
+  getVipList()
+  getRegisteredList()
+  getRegisteredUsersList()
+  getRegisteredSourceList()
+  getUserLifeObj()
+  getBuyAgainObj()
+})
+async function getVipList() {
+  const data = await getVipLevel()
+  vipLevel.value = initPieOption(`会员等级`, `32.5%`, data)
+}
+async function getRegisteredList() {
+  const data = await getRegistered()
+  registered.value = initPieOption(`年龄`, `32.5%`, data)
+}
+
+async function getRegisteredUsersList() {
+  const { sexList, ageObj, plateList } = await getRegisteredUsers()
+  age.value = initBarOption(ageObj.yData, ageObj.seriesData)
+  plate.value = initPieOption(`板块`, `36.5%`, plateList)
+  sex.value = initPieOption(`性别`, `36.5%`, sexList)
+}
+
+async function getRegisteredSourceList() {
+  const { yData, seriesData } = await getRegisteredSource()
+  registeredSource.value = initBarOption(yData, seriesData)
+}
+
+async function getUserLifeObj() {
+  const data = await getUserLife()
+  userLife.value = initRadarOption({ ...data })
+}
+
+async function getBuyAgainObj() {
+  const { legend, seriesData } = await getBuyAgain({
+    months: getAllMonth()
+  })
+  const seriesRest = seriesData.map((item) => ({
+    ...item,
+    tooltip: {
+      valueFormatter: function (value) {
+        return value + `%`
+      }
+    }
+  }))
+  bugAgain.value = initBarLineMergeOption({ legend, seriesData: seriesRest })
+}
+
+function getAllMonth(index = 10) {
+  const arr = []
+  const now = parseTime(new Date(), `{y}-{m}`)
+  for (let i = index; i > 0; i--) {
+    const date = new Date()
+    date.setMonth(date.getMonth() - i)
+    arr.push(parseTime(date, `{y}-{m}`))
+  }
+  arr.push(now)
+  return arr
+}
+
 function zoom() {
   showLandscape.value = true
   nextTick(() => {
@@ -99,13 +158,12 @@ function zoomOut() {
   showLandscape.value = false
 }
 function onClickTab(val) {
-  console.log(val)
   vipChannelKey.value = val.title
 }
 function sexPlateAgeChange(item) {
   this.activeKey = item
 }
-function initPieOption(graphicText, left = `36.5%`) {
+function initPieOption(graphicText, left = `36.5%`, data = []) {
   return {
     tooltip: {
       trigger: `item`
@@ -150,17 +208,11 @@ function initPieOption(graphicText, left = `36.5%`) {
     },
     series: [
       {
-        name: `Access From`,
+        // name: `Access From`,
         type: `pie`,
         radius: [`40%`, `60%`],
         center: [`40%`, `50%`],
-        data: [
-          { value: 1048, name: `Search Engine` },
-          { value: 735, name: `Direct` },
-          { value: 580, name: `Email` },
-          { value: 484, name: `Union Ads` },
-          { value: 300, name: `Video Ads` }
-        ],
+        data: data,
         avoidLabelOverlap: true,
         emphasis: {
           show: true,
@@ -183,7 +235,7 @@ function initPieOption(graphicText, left = `36.5%`) {
     ]
   }
 }
-function initBarOption(color = `#F39424`) {
+function initBarOption(yData, seriesData, color = `#F39424`) {
   return {
     tooltip: {
       trigger: `axis`,
@@ -207,14 +259,7 @@ function initBarOption(color = `#F39424`) {
     },
     yAxis: {
       type: `category`,
-      data: [
-        `61岁及以上`,
-        `51-60岁`,
-        `41-50岁`,
-        `31-40岁`,
-        `21-30岁`,
-        `20岁及以下`
-      ],
+      data: yData,
       axisLabel: {
         // interval: 0,
         // rotate: 60
@@ -229,7 +274,7 @@ function initBarOption(color = `#F39424`) {
     series: [
       {
         type: `bar`,
-        data: [100, 200, 500, 100, 800, 1000],
+        data: seriesData,
         itemStyle: {
           color
         }
@@ -243,7 +288,9 @@ function initBarLineMergeOption(data = {}) {
     left = `3%`,
     right = `5%`,
     top = `12%`,
-    bottom = `18%`
+    bottom = `18%`,
+    legend = [],
+    seriesData = []
   } = data
   console.log(color)
   return {
@@ -264,7 +311,7 @@ function initBarLineMergeOption(data = {}) {
       containLabel: true
     },
     legend: {
-      data: [`用户复购率`, `订单复购率`, `用户回购率`],
+      data: legend,
       left: `center`,
       bottom: `7%`,
       icon: `rect`,
@@ -273,7 +320,7 @@ function initBarLineMergeOption(data = {}) {
     },
     xAxis: {
       type: `category`,
-      data: [`06`, `07`, `08`, `09`, `10`, `11`, `12`, `01`, `02`],
+      data: getAllMonth(),
       axisPointer: {
         type: `shadow`
       }
@@ -287,66 +334,21 @@ function initBarLineMergeOption(data = {}) {
         formatter: `{value}%`
       }
     },
-    series: [
-      {
-        name: `总计`,
-        type: `bar`,
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + `%`
-          }
-        },
-        data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 5.6, 8.2, 32.6],
-        itemStyle: {
-          color
-        }
-      },
-      {
-        name: `用户复购率`,
-        type: `line`,
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + `%`
-          }
-        },
-        data: [3.0, 4.9, 7.0, 23.2, 25.6, 2.7, 3.6, 90.2, 32.6]
-      },
-      {
-        name: `订单复购率`,
-        type: `line`,
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + `%`
-          }
-        },
-        data: [4.0, 4.9, 25.6, 76.7, 20.6, 10.2, 32.6, 23.2, 7.0]
-      },
-      {
-        name: `用户回购率`,
-        type: `line`,
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + `%`
-          }
-        },
-        data: [25.0, 4.9, 7.0, 25.6, 40.7, 15.2, 32.6, 23.2, 30.6]
-      }
-    ]
+    // tooltip: {
+    //       valueFormatter: function (value) {
+    //         return value + `%`
+    //       }
+    //     },
+    series: seriesData
   }
 }
-function initRadarOption() {
+function initRadarOption({ indicator, legend, series }) {
   return {
     tooltip: {
       trigger: `axis`
     },
     legend: {
-      data: [
-        `风行（零售）`,
-        `风行（订奶）`,
-        `悦秀会商城`,
-        `皇上皇小程序`,
-        `流失预警客户`
-      ],
+      data: legend,
       left: `center`,
       bottom: `5%`,
       itemWidth: 6,
@@ -358,39 +360,12 @@ function initRadarOption() {
       shape: `polygon`,
       radius: `63%`,
       center: [`50%`, `45%`],
-      indicator: [
-        { name: `现在客户` },
-        { name: `流失客户` },
-        { name: `流失预警客户` },
-        { name: `活跃客户` },
-        { name: `新客户` }
-      ]
+      indicator
     },
     series: [
       {
         type: `radar`,
-        data: [
-          {
-            value: [4200, 3000, 2000, 3500, 3500],
-            name: `风行（零售）`
-          },
-          {
-            value: [3010, 5000, 2000, 4500, 1600],
-            name: `风行（订奶）`
-          },
-          {
-            value: [4000, 3000, 4500, 3000, 3050],
-            name: `悦秀会商城`
-          },
-          {
-            value: [1855, 1800, 2800, 4500, 4200],
-            name: `皇上皇小程序`
-          },
-          {
-            value: [1500, 1600, 1500, 2600, 4500],
-            name: `流失预警客户`
-          }
-        ],
+        data: series,
         tooltip: {
           trigger: `item`
         }
