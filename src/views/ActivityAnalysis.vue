@@ -1,102 +1,81 @@
 <template>
   <base-card
-    title="私域-2020-06"
+    title="私域"
     class="mb24"
-    name="总计"
-    @showPopup="showPopup"
+    :name="syName"
+    @showPopup="showPicker = true"
   >
     <div class="content">
-      <cell-list-second :list="list1" />
+      <cell-list-second :list="syList" />
     </div>
   </base-card>
   <base-card
-    title="企微-2020-06-总计"
+    title="企微"
     class="mb24"
-    name="总计"
-    @showPopup="showPopup"
+    :name="qwName"
+    @showPopup="showPickerQw = true"
   >
     <div class="content">
-      <cell-list-second :list="list2" />
+      <cell-list-second :list="qwList" />
     </div>
   </base-card>
   <base-popup-picker
-    :columns="columns"
+    :columns="columnsSy"
     v-model:showPicker="showPicker"
     @onConfirm="onConfirm"
+  />
+  <base-popup-picker
+    :columns="columnsQw"
+    v-model:showPicker="showPickerQw"
+    @onConfirm="onConfirmQw"
   />
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-
-const list1 = reactive([
-  {
-    name: `人群触达人数（万）`,
-    value: `111`
-  },
-  {
-    name: `参与活动人数（万）`,
-    value: `0.86`
-  },
-  {
-    name: `用户转化（%）`,
-    value: `0.76%`
-  },
-  {
-    name: `销售额（万元）`,
-    value: `1.6`
-  }
-])
-const list2 = reactive([
-  {
-    name: `人数增长`,
-    value: `111`
-  },
-  {
-    name: `企微群增长`,
-    value: `0.86`
-  },
-  {
-    name: `群活跃度（%）`,
-    value: `0.76%`
-  },
-  {
-    name: `群转化（%）`,
-    value: `0.76%`
-  }
-])
-
-const showPicker = ref(false)
-function showPopup() {
-  showPicker.value = true
+import { ref, onMounted } from 'vue'
+import { getQiWei, getSiYu } from '../api/activityAnalysis'
+onMounted(async () => {
+  getSiYuList()
+  getQiWeiList()
+})
+let siYuData = {}
+const syName = ref(``)
+const syList = ref([])
+const columnsSy = ref([])
+async function getSiYuList() {
+  const data = await getSiYu()
+  siYuData = data
+  const keyList = Object.keys(data)
+  columnsSy.value = keyList
+  syName.value = keyList[0]
+  syList.value = siYuData[syName.value]
 }
-const columns = [
-  {
-    text: `浙江`,
-    children: [
-      {
-        text: `杭州`
-      },
-      {
-        text: `温州`
-      }
-    ]
-  },
-  {
-    text: `福建`,
-    children: [
-      {
-        text: `福州`
-      },
-      {
-        text: `厦门`
-      }
-    ]
-  }
-]
+
+let qwData = {}
+const qwName = ref(``)
+const qwList = ref([])
+const columnsQw = ref([])
+async function getQiWeiList() {
+  const data = await getQiWei()
+  qwData = data
+  const keyList = Object.keys(data)
+  columnsQw.value = keyList
+  qwName.value = keyList[0]
+  qwList.value = qwData[qwName.value]
+}
+const showPicker = ref(false)
+const showPickerQw = ref(false)
 function onConfirm(val) {
   console.log(val)
+  syList.value = siYuData[val]
+  syName.value = val
   showPicker.value = false
+}
+function onConfirmQw(val) {
+  console.log(val)
+  qwList.value = siYuData[val]
+  qwName.value = val
+  showPickerQw.value = false
 }
 </script>
 

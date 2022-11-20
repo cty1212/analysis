@@ -136,7 +136,7 @@ async function getBuyAgainObj() {
   bugAgain.value = initBarLineMergeOption({ legend, seriesData: seriesRest })
 }
 
-function getAllMonth(index = 10) {
+function getAllMonth(index = 11) {
   const arr = []
   const now = parseTime(new Date(), `{y}-{m}`)
   for (let i = index; i > 0; i--) {
@@ -150,11 +150,13 @@ function getAllMonth(index = 10) {
 
 function zoom() {
   showLandscape.value = true
+  bugAgain.value.xAxis.axisLabel.rotate = 0
   nextTick(() => {
     childChart.value.resizeHandler()
   })
 }
 function zoomOut() {
+  bugAgain.value.xAxis.axisLabel.rotate = 45
   showLandscape.value = false
 }
 function onClickTab(val) {
@@ -323,6 +325,10 @@ function initBarLineMergeOption(data = {}) {
       data: getAllMonth(),
       axisPointer: {
         type: `shadow`
+      },
+      axisLabel: {
+        rotate: 45,
+        interval: 0
       }
     },
     yAxis: {
