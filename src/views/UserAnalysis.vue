@@ -1,52 +1,55 @@
 <template>
-  <base-card class="mb24">
-    <van-tabs v-model:active="vipChannelKey" @click-tab="onClickTab">
-      <van-tab
-        :title="item"
-        v-for="item in vipChannel"
-        :name="item"
-        :key="item"
+  <base-loading v-if="loading" />
+  <template v-else>
+    <base-card class="mb24">
+      <van-tabs v-model:active="vipChannelKey" @click-tab="onClickTab">
+        <van-tab
+          :title="item"
+          v-for="item in vipChannel"
+          :name="item"
+          :key="item"
+        />
+      </van-tabs>
+      <base-echart
+        v-if="vipChannelKey === '会员等级'"
+        :options="vipLevel"
+        class="h400"
       />
-    </van-tabs>
-    <base-echart
-      v-if="vipChannelKey === '会员等级'"
-      :options="vipLevel"
-      class="h400"
-    />
-    <base-echart
-      v-if="vipChannelKey === '注册渠道'"
-      :options="registered"
-      class="h400"
-    />
-  </base-card>
-  <base-card title="注册用户" class="mb24">
-    <div class="sex-plate-age">
-      <div
-        v-for="item in sexPlateAge"
-        class="item"
-        :key="item"
-        :class="{ active: activeKey === item }"
-        @click="sexPlateAgeChange(item)"
-      >
-        {{ item }}
+      <base-echart
+        v-if="vipChannelKey === '注册渠道'"
+        :options="registered"
+        class="h400"
+      />
+    </base-card>
+    <base-card title="注册用户" class="mb24">
+      <div class="sex-plate-age">
+        <div
+          v-for="item in sexPlateAge"
+          class="item"
+          :key="item"
+          :class="{ active: activeKey === item }"
+          @click="sexPlateAgeChange(item)"
+        >
+          {{ item }}
+        </div>
       </div>
-    </div>
-    <base-echart v-if="activeKey === '性别'" :options="sex" class="h400" />
-    <base-echart v-if="activeKey === '板块'" :options="plate" class="h400" />
-    <base-echart v-if="activeKey === '年龄'" :options="age" class="h884" />
-  </base-card>
-  <base-card title="注册来源分布" class="mb24">
-    <base-echart :options="registeredSource" class="h884" />
-  </base-card>
-  <base-card title="注册用户生命周期" class="mb24">
-    <base-echart :options="userLife" class="h727" />
-  </base-card>
-  <base-card title="业态复购率" class="mb18 pr">
-    <div class="zoom" @click="zoom">
-      <base-svg name="zoom-in" class="zoom-in" />
-    </div>
-    <base-echart :options="bugAgain" class="h400" />
-  </base-card>
+      <base-echart v-if="activeKey === '性别'" :options="sex" class="h400" />
+      <base-echart v-if="activeKey === '板块'" :options="plate" class="h400" />
+      <base-echart v-if="activeKey === '年龄'" :options="age" class="h884" />
+    </base-card>
+    <base-card title="注册来源分布" class="mb24">
+      <base-echart :options="registeredSource" class="h884" />
+    </base-card>
+    <base-card title="注册用户生命周期" class="mb24">
+      <base-echart :options="userLife" class="h727" />
+    </base-card>
+    <base-card title="业态复购率" class="mb18 pr">
+      <div class="zoom" @click="zoom">
+        <base-svg name="zoom-in" class="zoom-in" />
+      </div>
+      <base-echart :options="bugAgain" class="h400" />
+    </base-card>
+  </template>
   <van-popup v-model:show="showLandscape">
     <div class="bg-all-white">
       <base-echart
@@ -73,6 +76,7 @@ import {
   getBuyAgain
 } from '../api/userAnalysis'
 import { parseTime } from '../utils/index'
+const loading = ref(true)
 const sexPlateAge = [`性别`, `板块`, `年龄`]
 const activeKey = ref(`性别`)
 const vipChannel = [`会员等级`, `注册渠道`]
@@ -88,52 +92,83 @@ const registeredSource = ref({})
 const userLife = ref({})
 const bugAgain = ref({})
 onMounted(async () => {
-  getVipList()
-  getRegisteredList()
-  getRegisteredUsersList()
-  getRegisteredSourceList()
-  getUserLifeObj()
-  getBuyAgainObj()
+  await getVipList()
+  await getRegisteredList()
+  await getRegisteredUsersList()
+  await getRegisteredSourceList()
+  await getUserLifeObj()
+  await getBuyAgainObj()
 })
 async function getVipList() {
-  const data = await getVipLevel()
-  vipLevel.value = initPieOption(`会员等级`, `32.5%`, data)
+  try {
+    const data = await getVipLevel()
+    vipLevel.value = initPieOption(`会员等级`, `32.5%`, data)
+  } catch (error) {
+    console.log(error)
+  }
 }
 async function getRegisteredList() {
-  const data = await getRegistered()
-  registered.value = initPieOption(`年龄`, `32.5%`, data)
+  try {
+    const data = await getRegistered()
+    registered.value = initPieOption(`年龄`, `32.5%`, data)
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function getRegisteredUsersList() {
-  const { sexList, ageObj, plateList } = await getRegisteredUsers()
-  age.value = initBarOption(ageObj.yData, ageObj.seriesData)
-  plate.value = initPieOption(`板块`, `36.5%`, plateList)
-  sex.value = initPieOption(`性别`, `36.5%`, sexList)
+  try {
+    const {
+      sexList = [],
+      ageObj = {},
+      plateList = []
+    } = await getRegisteredUsers()
+    age.value = initBarOption(ageObj.yData, ageObj.seriesData)
+    plate.value = initPieOption(`板块`, `36.5%`, plateList)
+    if (!sexList.errno) {
+      sex.value = initPieOption(`性别`, `36.5%`, sexList)
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function getRegisteredSourceList() {
-  const { yData, seriesData } = await getRegisteredSource()
-  registeredSource.value = initBarOption(yData, seriesData)
+  try {
+    const { yData, seriesData } = await getRegisteredSource()
+    registeredSource.value = initBarOption(yData, seriesData)
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function getUserLifeObj() {
-  const data = await getUserLife()
-  userLife.value = initRadarOption({ ...data })
+  try {
+    const data = await getUserLife()
+    userLife.value = initRadarOption({ ...data })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function getBuyAgainObj() {
-  const { legend, seriesData } = await getBuyAgain({
-    months: getAllMonth()
-  })
-  const seriesRest = seriesData.map((item) => ({
-    ...item,
-    tooltip: {
-      valueFormatter: function (value) {
-        return value + `%`
+  try {
+    const { legend, seriesData } = await getBuyAgain({
+      months: getAllMonth()
+    })
+    const seriesRest = seriesData.map((item) => ({
+      ...item,
+      tooltip: {
+        valueFormatter: function (value) {
+          return value + `%`
+        }
       }
-    }
-  }))
-  bugAgain.value = initBarLineMergeOption({ legend, seriesData: seriesRest })
+    }))
+    bugAgain.value = initBarLineMergeOption({ legend, seriesData: seriesRest })
+  } catch (error) {
+    console.log(error)
+  }
+  loading.value = false
 }
 
 function getAllMonth(index = 11) {
@@ -286,7 +321,7 @@ function initBarOption(yData, seriesData, color = `#F39424`) {
 }
 function initBarLineMergeOption(data = {}) {
   const {
-    color = `#F39424`,
+    // color = `#F39424`,
     left = `3%`,
     right = `5%`,
     top = `12%`,
@@ -294,7 +329,7 @@ function initBarLineMergeOption(data = {}) {
     legend = [],
     seriesData = []
   } = data
-  console.log(color)
+  // console.log(color)
   return {
     tooltip: {
       trigger: `axis`,
@@ -340,11 +375,6 @@ function initBarLineMergeOption(data = {}) {
         formatter: `{value}%`
       }
     },
-    // tooltip: {
-    //       valueFormatter: function (value) {
-    //         return value + `%`
-    //       }
-    //     },
     series: seriesData
   }
 }

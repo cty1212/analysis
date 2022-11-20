@@ -19,7 +19,6 @@ const active = ref(0)
 const title = ref(`用户概览与特征`)
 const route = useRoute()
 const topList = ref([])
-console.log(topList)
 function tabChange(index) {
   router.push(routerList[index])
   title.value = nameList[index]
@@ -43,6 +42,7 @@ onMounted(async () => {
 
 <style lang="scss">
 .container {
+  position: relative;
   padding: 0 24px 90px;
 }
 </style>

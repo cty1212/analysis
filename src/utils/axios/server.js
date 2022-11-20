@@ -55,6 +55,7 @@ service.interceptors.response.use(
       return response.data.data
     } else {
       Toast.fail(response.data.message)
+      return Promise.reject(response.data.message)
     }
   },
   (error) => {

@@ -2,6 +2,10 @@ import { service } from './server'
 
 import config from './config'
 
+// import NProgress from 'nprogress'
+// import 'nprogress/nprogress.css'
+// NProgress.configure({ showSpinner: true })
+
 const { default_headers } = config
 
 const request = (option) => {
@@ -19,7 +23,18 @@ const request = (option) => {
 }
 export default {
   get: (option) => {
-    return request({ method: `get`, ...option })
+    return new Promise((resolve, reject) => {
+      // NProgress.start()
+      request({ method: `get`, ...option })
+        .then((res) => {
+          // NProgress.done()
+          resolve(res)
+        })
+        .catch((err) => {
+          // NProgress.done()
+          reject(err)
+        })
+    })
   },
   post: (option) => {
     return request({ method: `post`, ...option })

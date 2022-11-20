@@ -7,6 +7,7 @@ import { VantResolver } from 'unplugin-vue-components/resolvers'
 import postcsspxtoviewport from 'cnjm-postcss-px-to-viewport'
 import autoprefixer from 'autoprefixer'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+// import dynamicImportVars from '@rollup/plugin-dynamic-import-vars'
 import path from 'path'
 const root = process.cwd()
 
