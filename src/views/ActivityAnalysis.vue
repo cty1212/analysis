@@ -73,7 +73,7 @@ function onConfirm(val) {
 }
 function onConfirmQw(val) {
   console.log(val)
-  qwList.value = siYuData[val]
+  qwList.value = qwData[val]
   qwName.value = val
   showPickerQw.value = false
 }
