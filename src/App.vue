@@ -2,7 +2,11 @@
   <base-nav-bar :title="title" @click-left="onClickLeft" />
   <common-top :topList="topList" />
   <div class="container">
+    <!-- <suspense> -->
     <router-view />
+    <!-- <template #fallback> Loading... </template>
+    </suspense> -->
+    <!-- <router-view /> -->
   </div>
   <base-tab-bar v-model:active="active" @tab-change="tabChange" />
 </template>
@@ -34,9 +38,14 @@ watch(
     title.value = nameList[index]
   }
 )
+
 onMounted(async () => {
-  const data = await getTopList()
-  topList.value = data
+  try {
+    const data = await getTopList()
+    topList.value = data
+  } catch (error) {
+    console.log(error)
+  }
 })
 </script>
 

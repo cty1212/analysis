@@ -1,6 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import storage from '@/utils/storage'
+import { getUserInfo } from '@/api/oAuth'
+// import { Dialog } from 'vant'
+
+// import { oAuthConfig } from '@/utils/oAuth'
+
 NProgress.configure({ showSpinner: true })
 
 const modules = import.meta.glob(`@/views/*.vue`)
@@ -32,12 +38,38 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((_to, _from, next) => {
-  NProgress.start() // start progress bar
-  next()
+async function getUserToken(code) {
+  try {
+    const user = await getUserInfo({
+      code
+    })
+    console.log(user)
+    if (user.token) {
+      console.log(222)
+      storage.setItem(`token`, user.token)
+    }
+    return true
+  } catch (error) {
+    console.log(error)
+    return true
+  }
+}
+
+router.beforeEach(async (_to) => {
+  console.log(_to)
+  NProgress.start()
+  if (!storage.getItem(`token`) && _to.query.code && _to.query.state) {
+    return getUserToken(_to.query.code)
+  } else {
+    return true
+  }
+  // start progress bar
 })
 
 router.afterEach(() => {
   NProgress.done() // finish progress bar
 })
+// router.onError((error) => {
+//   console.log(error)
+// })
 export default router

@@ -4,17 +4,29 @@ import qs from 'qs'
 
 import config from './config'
 
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
 
+import { loginUrl } from '../oAuth'
+import storage from '../../utils/storage'
+
+const CancelToken = axios.CancelToken
+const source = CancelToken.source()
+// console.log(source)
+const controller = new AbortController()
 // 创建axios实例
 const service = axios.create({
   baseURL: import.meta.env.VITE_BASE_API, // api 的 base_url
-  timeout: config.request_timeout // 请求超时时间
+  timeout: config.request_timeout, // 请求超时时间
+  cancelToken: source.token,
+  signal: controller.signal
 })
 
 // request拦截器
 service.interceptors.request.use(
   (config) => {
+    if (storage.getItem(`token`)) {
+      config.headers.Authorization = `Bearer ` + storage.getItem(`token`)
+    }
     if (
       config.method === `post` &&
       config.headers[`Content-Type`] === `application/x-www-form-urlencoded`
@@ -59,8 +71,44 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    console.log(`err` + error) // for debug
-    Toast.fail(error.message)
+    console.log(`err，` + error) // for debug
+    console.log(error)
+    if (
+      error.response?.status === 500 &&
+      error.response?.data.errno === 40001
+    ) {
+      console.log(1111)
+      Dialog.confirm({
+        title: `提示`,
+        message: `登录失败，是否重新登录`
+      })
+        .then(() => {
+          loginUrl()
+        })
+        .catch(() => {
+          // on cancel
+        })
+      source.cancel()
+    } else if (error.response?.status === 401) {
+      // todo 清除token
+      storage.removeItem(`token`)
+      Dialog.alert({
+        title: `提示`,
+        message: `请先登录`
+      }).then(() => {
+        loginUrl()
+      })
+      source.cancel()
+      controller.abort()
+    } else if (
+      error.code === `ERR_CANCELED` ||
+      error.message === `canceled` ||
+      error.name === `CanceledError`
+    ) {
+      return Promise.reject(error)
+    } else {
+      Toast.fail(error.message)
+    }
     return Promise.reject(error)
   }
 )

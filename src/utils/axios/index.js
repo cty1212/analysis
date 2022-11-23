@@ -37,7 +37,19 @@ export default {
     })
   },
   post: (option) => {
-    return request({ method: `post`, ...option })
+    // return request({ method: `post`, ...option })
+    return new Promise((resolve, reject) => {
+      // NProgress.start()
+      request({ method: `post`, ...option })
+        .then((res) => {
+          // NProgress.done()
+          resolve(res)
+        })
+        .catch((err) => {
+          // NProgress.done()
+          reject(err)
+        })
+    })
   },
   delete: (option) => {
     return request({ method: `delete`, ...option })
