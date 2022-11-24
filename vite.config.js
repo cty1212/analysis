@@ -7,6 +7,7 @@ import { VantResolver } from 'unplugin-vue-components/resolvers'
 import postcsspxtoviewport from 'cnjm-postcss-px-to-viewport'
 import autoprefixer from 'autoprefixer'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import topLevelAwait from 'vite-plugin-top-level-await'
 // import dynamicImportVars from '@rollup/plugin-dynamic-import-vars'
 import path from 'path'
 const root = process.cwd()
@@ -23,6 +24,12 @@ export default defineConfig(({ mode }) => {
     base: env.VITE_PUBLIC_PATH || `/`,
     plugins: [
       vue(),
+      topLevelAwait({
+        // The export name of top-level await promise for each chunk module
+        promiseExportName: `__tla`,
+        // The function to generate import names of top-level await promise in each chunk module
+        promiseImportName: (i) => `__tla_${i}`
+      }),
       Components({
         resolvers: [VantResolver()]
       }),
