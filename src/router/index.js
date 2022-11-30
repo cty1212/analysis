@@ -3,6 +3,9 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import storage from '@/utils/storage'
 import { getUserInfo } from '@/api/oAuth'
+// import UserAnalysis from '../views/UserAnalysis.vue'
+// import BusinessAnalysis from '../views/BusinessAnalysis.vue'
+// import ActivityAnalysis from '../views/ActivityAnalysis.vue'
 // import { Dialog } from 'vant'
 
 // import { oAuthConfig } from '@/utils/oAuth'
@@ -14,23 +17,30 @@ const modules = import.meta.glob(`@/views/*.vue`)
 const routes = [
   {
     path: `/`,
+    redirect: `/userAnalysis`
+  },
+  {
+    path: `/userAnalysis`,
     name: `UserAnalysis`,
     component: modules[`/src/views/UserAnalysis.vue`]
+    // component: UserAnalysis
   },
   {
     path: `/businessAnalysis`,
     name: `businessAnalysis`,
     component: modules[`/src/views/BusinessAnalysis.vue`]
+    // component: BusinessAnalysis
   },
   {
     path: `/activityAnalysis`,
     name: `activityAnalysis`,
     component: modules[`/src/views/ActivityAnalysis.vue`]
+    // component: ActivityAnalysis
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
+  history: createWebHistory(),
   routes,
   scrollBehavior() {
     // 始终滚动到顶部
@@ -48,20 +58,19 @@ async function getUserToken(code) {
       console.log(222)
       storage.setItem(`token`, user.token)
     }
-    return true
   } catch (error) {
     console.log(error)
-    return true
   }
 }
 
-router.beforeEach(async (_to) => {
+router.beforeEach(async (_to, _from, next) => {
   console.log(_to)
   NProgress.start()
   if (!storage.getItem(`token`) && _to.query.code && _to.query.state) {
-    return getUserToken(_to.query.code)
+    await getUserToken(_to.query.code)
+    next()
   } else {
-    return true
+    next()
   }
   // start progress bar
 })
@@ -69,7 +78,9 @@ router.beforeEach(async (_to) => {
 router.afterEach(() => {
   NProgress.done() // finish progress bar
 })
-// router.onError((error) => {
-//   console.log(error)
-// })
+router.onError((error, to, from) => {
+  console.log(error)
+  console.log(to)
+  console.log(from)
+})
 export default router

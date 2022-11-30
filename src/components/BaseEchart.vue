@@ -1,6 +1,5 @@
 <script setup>
 import echarts from '@/plugins/echarts'
-import { number } from 'echarts/core'
 import { debounce, isString } from 'lodash-es'
 import {
   computed,
@@ -19,11 +18,11 @@ const props = defineProps({
     required: true
   },
   width: {
-    type: [String, number],
+    type: [String, Number],
     default: ``
   },
   height: {
-    type: [String, number],
+    type: [String, Number],
     default: ``
   },
   landscape: {
