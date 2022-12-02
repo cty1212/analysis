@@ -1,10 +1,10 @@
 <template>
   <div class="loading">
-    <!-- <van-loading type="spinner" color="#f08700">
+    <van-loading type="spinner" color="#f08700">
       {{ props.text }}
-    </van-loading> -->
-    <base-svg name="loading" class="loadingSvg" />
-    <span class="txt">{{ props.text }}</span>
+    </van-loading>
+    <!-- <base-svg name="loading" class="loadingSvg" />
+    <span class="txt">{{ props.text }}</span> -->
   </div>
 </template>
 

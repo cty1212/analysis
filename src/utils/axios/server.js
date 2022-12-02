@@ -4,7 +4,7 @@ import qs from 'qs'
 
 import config from './config'
 
-import { Toast, Dialog } from 'vant'
+import { Toast } from 'vant'
 
 import { loginUrl } from '../oAuth'
 import storage from '../../utils/storage'
@@ -77,29 +77,29 @@ service.interceptors.response.use(
       error.response?.status === 500 &&
       error.response?.data.errno === 40001
     ) {
-      console.log(1111)
-      Dialog.confirm({
-        title: `提示`,
-        message: `登录失败，是否重新登录`
-      })
-        .then(() => {
-          loginUrl()
-        })
-        .catch(() => {
-          // on cancel
-        })
+      // Dialog.confirm({
+      //   title: `提示`,
+      //   message: `登录失败，是否重新登录`
+      // })
+      // .then(() => {
+      // })
+      // .catch(() => {
+      // // on cancel
+      // })
       source.cancel()
+      controller.abort()
+      loginUrl()
     } else if (error.response?.status === 401) {
       // todo 清除token
       storage.removeItem(`token`)
-      Dialog.alert({
-        title: `提示`,
-        message: `请先登录`
-      }).then(() => {
-        loginUrl()
-      })
+      // Dialog.alert({
+      //   title: `提示`,
+      //   message: `请先登录`
+      // }).then(() => {
+      // })
       source.cancel()
       controller.abort()
+      loginUrl()
     } else if (
       error.code === `ERR_CANCELED` ||
       error.message === `canceled` ||

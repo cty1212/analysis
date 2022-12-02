@@ -198,7 +198,7 @@ function onClickTab(val) {
   vipChannelKey.value = val.title
 }
 function sexPlateAgeChange(item) {
-  this.activeKey = item
+  activeKey.value = item
 }
 function initPieOption(graphicText, left = `36.5%`, data = []) {
   return {

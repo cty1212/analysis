@@ -40,7 +40,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_ROUTER_PATH),
   routes,
   scrollBehavior() {
     // 始终滚动到顶部

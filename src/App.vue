@@ -1,5 +1,5 @@
 <template>
-  <base-nav-bar :title="title" @click-left="onClickLeft" />
+  <!-- <base-nav-bar :title="title" @click-left="onClickLeft" /> -->
   <common-top :topList="topList" />
   <div class="container">
     <router-view />
@@ -13,21 +13,21 @@ import { RouterView, useRouter, useRoute } from 'vue-router'
 // import CommonTop from './components/CommonTop.vue'
 import { getTopList } from './api/userAnalysis'
 const router = useRouter()
-const nameList = [`用户概览与特征`, `经营分析`, `活动分析`]
+// const nameList = [`用户概览与特征`, `经营分析`, `活动分析`]
 const routerList = [`/userAnalysis`, `/businessAnalysis`, `/activityAnalysis`]
 const active = ref(0)
-const title = ref(`用户概览与特征`)
+// const title = ref(`用户概览与特征`)
 const route = useRoute()
 const topList = ref([])
 function tabChange(index) {
   router.push(routerList[index]).catch((err) => {
     console.log(err)
   })
-  title.value = nameList[index]
+  // title.value = nameList[index]
 }
-function onClickLeft() {
-  router.go(-1)
-}
+// function onClickLeft() {
+//   router.go(-1)
+// }
 watch(
   () => route.path,
   (val) => {
@@ -39,7 +39,7 @@ watch(
 function initPage(path) {
   const index = routerList.findIndex((item) => item.includes(path))
   active.value = index
-  title.value = nameList[index]
+  // title.value = nameList[index]
 }
 
 onMounted(async () => {

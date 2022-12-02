@@ -4,7 +4,7 @@ import 'normalize.css'
 import '@/assets/common.scss'
 import 'virtual:svg-icons-register'
 import 'vant/es/toast/style'
-import 'vant/es/dialog/style'
+// import 'vant/es/dialog/style'
 
 import App from './App.vue'
 import router from './router'
